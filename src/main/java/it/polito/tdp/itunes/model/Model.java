@@ -107,6 +107,7 @@ public class Model {
 			int bytesOcc=c.getBytes();
 			int bestBytes=0;
 			best= new LinkedList<Track>(parziale);
+			
 			cerca(parziale, maxBytes, bytesOcc, bestBytes);
 			
 			
@@ -116,16 +117,19 @@ public class Model {
 
 		private void cerca(List<Track> parziale, int maxBytes, int bytesOcc, int bestBytes) {
 			
+			if(bytesOcc>maxBytes)
+				return;
 			
-				if(parziale.size()>this.best.size()) {
+			if(parziale.size()>this.best.size()) {
 					bestBytes= bytesOcc;
 				
 			
 			}
 			for(Track t: Graphs.neighborListOf(this.grafo, parziale.get(parziale.size()-1))) {
+				if(!parziale.contains(t));
 				parziale.add(t);
 				bytesOcc+=t.getBytes();
-				if(!parziale.contains(t) && bytesOcc<= maxBytes) {
+				if( bytesOcc<= maxBytes) {
 					cerca(parziale, maxBytes, bytesOcc, bestBytes);
 				
 				}
