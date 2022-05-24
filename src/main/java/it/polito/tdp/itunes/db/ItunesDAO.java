@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 import it.polito.tdp.itunes.model.Album;
 import it.polito.tdp.itunes.model.Artist;
 import it.polito.tdp.itunes.model.Genre;
@@ -88,7 +90,7 @@ public class ItunesDAO {
 			while (res.next()) {
 				result.add(new Track(res.getInt("TrackId"), res.getString("Name"), 
 						res.getString("Composer"), res.getInt("Milliseconds"), 
-						res.getInt("Bytes"),res.getDouble("UnitPrice")));
+						res.getInt("Bytes"),res.getDouble("UnitPrice"), res.getInt("MediaTypeId")));
 			
 			}
 			conn.close();
@@ -109,7 +111,9 @@ public class ItunesDAO {
 			ResultSet res = st.executeQuery();
 
 			while (res.next()) {
-				result.add(new Genre(res.getInt("GenreId"), res.getString("Name")));
+				Genre g= new Genre(res.getInt("GenreId"), res.getString("Name"));
+				result.add(g);
+				
 			}
 			conn.close();
 		} catch (SQLException e) {
@@ -137,6 +141,32 @@ public class ItunesDAO {
 			throw new RuntimeException("SQL Error");
 		}
 		return result;
+	}
+	
+	public List<Track> getVertici (Genre genere){
+		String sql="SELECT * "
+				+ "FROM track t "
+				+ "WHERE t.GenreId=? ";
+		List<Track> result = new LinkedList<>();
+		int genId= genere.getGenreId();
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, genId);
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				result.add(new Track(res.getInt("TrackId"), res.getString("Name"), 
+						res.getString("Composer"), res.getInt("Milliseconds"), 
+						res.getInt("Bytes"),res.getDouble("UnitPrice"), res.getInt("MediaTypeId")));
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+		return result;
+		
 	}
 
 	

@@ -6,7 +6,10 @@ package it.polito.tdp.itunes;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.itunes.model.Genre;
 import it.polito.tdp.itunes.model.Model;
+import it.polito.tdp.itunes.model.Track;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -34,10 +37,10 @@ public class FXMLController {
     private Button btnMassimo; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbCanzone"
-    private ComboBox<?> cmbCanzone; // Value injected by FXMLLoader
+    private ComboBox<Track> cmbCanzone; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbGenere"
-    private ComboBox<?> cmbGenere; // Value injected by FXMLLoader
+    private ComboBox<Genre> cmbGenere; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtMemoria"
     private TextField txtMemoria; // Value injected by FXMLLoader
@@ -47,16 +50,33 @@ public class FXMLController {
 
     @FXML
     void btnCreaLista(ActionEvent event) {
+    	
+    	Track t= this.cmbCanzone.getValue();
+    	int bytes = Integer.parseInt(this.txtMemoria.getText()) ;
+    	this.model.listaCanzoniPrefe(t, bytes);
 
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	
+    	this.txtResult.clear();
+    	 Genre g= this.cmbGenere.getValue();
+    	 this.model.creaGrafo(g);
+    	 
+    	 this.txtResult.appendText(this.model.nVertici());
+    	 this.txtResult.appendText(this.model.nArchi());
+    	 
+    	 this.cmbCanzone.getItems().addAll(this.model.getTracksGrafo());
 
     }
 
     @FXML
     void doDeltaMassimo(ActionEvent event) {
+    	
+    	this.txtResult.clear();
+    	
+    	this.txtResult.appendText(this.model.deltaMax().toString());
     	
     	
     }
@@ -75,6 +95,8 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	this.cmbGenere.getItems().addAll(this.model.getAllGenre());
     }
 
 }
