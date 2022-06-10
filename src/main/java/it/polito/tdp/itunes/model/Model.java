@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -108,33 +109,37 @@ public class Model {
 			int bestBytes=0;
 			best= new LinkedList<Track>(parziale);
 			
-			cerca(parziale, maxBytes, bytesOcc, bestBytes);
+			cerca(parziale, maxBytes, bytesOcc, bestBytes, c);
 			
 			
 			return best;
 			
 		}
 
-		private void cerca(List<Track> parziale, int maxBytes, int bytesOcc, int bestBytes) {
+		private void cerca(List<Track> parziale, int maxBytes, int bytesOcc, int bestBytes, Track c) {
 			
 			if(bytesOcc>maxBytes)
 				return;
 			
 			if(parziale.size()>this.best.size()) {
 					bestBytes= bytesOcc;
-				
+				this.best= new LinkedList<Track>(parziale);
 			
 			}
-			for(Track t: Graphs.neighborListOf(this.grafo, parziale.get(parziale.size()-1))) {
-				if(!parziale.contains(t));
+			ConnectivityInspector<Track,DefaultWeightedEdge> inspector= new ConnectivityInspector<>(this.grafo);
+			
+			
+			for(Track t: inspector.connectedSetOf(c)) {
+				if(!parziale.contains(t)) {
 				parziale.add(t);
 				bytesOcc+=t.getBytes();
-				if( bytesOcc<= maxBytes) {
-					cerca(parziale, maxBytes, bytesOcc, bestBytes);
 				
-				}
-				parziale.remove(t);
-				bytesOcc-=t.getBytes();
+					cerca(parziale, maxBytes, bytesOcc, bestBytes, c);
+					
+					parziale.remove(t);
+					bytesOcc-=t.getBytes();
+				
+			}
 			}
 
 			

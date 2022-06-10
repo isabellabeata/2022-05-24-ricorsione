@@ -53,7 +53,7 @@ public class FXMLController {
     	
     	Track t= this.cmbCanzone.getValue();
     	int bytes = Integer.parseInt(this.txtMemoria.getText()) ;
-    	this.model.listaCanzoniPrefe(t, bytes);
+    	this.txtResult.setText( this.model.listaCanzoniPrefe(t, bytes).toString());
 
     }
 
@@ -76,7 +76,7 @@ public class FXMLController {
     	
     	this.txtResult.clear();
     	
-    	this.txtResult.appendText(this.model.deltaMax().toString());
+    	this.txtResult.appendText(this.model.deltaMax().toString()+"\n");
     	
     	
     }
